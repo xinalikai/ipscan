@@ -1,0 +1,13 @@
+# Нормализация переводов строк между Windows и Unix
+* text=auto
+
+# Gradle-скрипты должны оставаться в LF
+*.sh      text eol=lf
+gradlew   text eol=lf
+*.bat     text eol=crlf
+*.properties text eol=lf
+
+# Бинарные файлы
+*.png  binary
+*.webp binary
+*.jar  binary
