@@ -19,9 +19,10 @@ android {
 
     buildTypes {
         release {
+            // Полный режим R8 для всего приложения (packageScope — только для перехода,
+            // и в сочетании с этим проектом он ломал release-сборку на старте).
             optimization {
                 enable = true
-                packageScope = setOf("androidx.**", "kotlin.**", "kotlinx.**")
             }
         }
     }
