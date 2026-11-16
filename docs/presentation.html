@@ -1,0 +1,583 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>IP Scanner — презентация</title>
+<style>
+  :root {
+    --bg: #0b1120;
+    --panel: #121d32;
+    --panel-2: #0f192b;
+    --line: #24334e;
+    --text: #e7eefb;
+    --muted: #95a7c2;
+    --accent: #7dd3fc;
+    --accent-2: #a78bfa;
+    --ok: #86efac;
+    --no: #fca5a5;
+  }
+
+  * { box-sizing: border-box; }
+
+  html, body {
+    margin: 0;
+    height: 100%;
+    background: radial-gradient(1200px 700px at 80% -10%, #15233d 0%, var(--bg) 55%);
+    color: var(--text);
+    font-family: "Segoe UI", "Inter", system-ui, -apple-system, sans-serif;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+    overflow: hidden;
+  }
+
+  body { display: flex; align-items: center; justify-content: center; }
+
+  #stage {
+    position: relative;
+    width: 1280px;
+    height: 720px;
+    flex: none;
+    transform-origin: center center;
+  }
+
+  .slide {
+    position: absolute;
+    inset: 0;
+    padding: 52px 64px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 22px;
+    opacity: 0;
+    transform: translateY(14px);
+    transition: opacity .32s ease, transform .32s ease;
+    pointer-events: none;
+  }
+
+  .slide.active { opacity: 1; transform: none; pointer-events: auto; }
+
+  .kicker {
+    font-size: 13px;
+    letter-spacing: .22em;
+    text-transform: uppercase;
+    color: var(--accent);
+    font-weight: 600;
+  }
+
+  h1 {
+    margin: 0;
+    font-size: 76px;
+    line-height: 1.02;
+    letter-spacing: -0.02em;
+    background: linear-gradient(100deg, #ffffff 10%, var(--accent) 55%, var(--accent-2) 95%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  h2 {
+    margin: 0;
+    font-size: 38px;
+    line-height: 1.1;
+    letter-spacing: -0.01em;
+  }
+
+  h2::after {
+    content: "";
+    display: block;
+    width: 64px;
+    height: 4px;
+    margin-top: 12px;
+    border-radius: 4px;
+    background: linear-gradient(90deg, var(--accent), var(--accent-2));
+  }
+
+  h3 { margin: 0 0 6px; font-size: 19px; }
+
+  p { margin: 0; }
+
+  .lead {
+    font-size: 22px;
+    line-height: 1.45;
+    color: var(--muted);
+    max-width: 980px;
+  }
+
+  .meta { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 6px; }
+
+  .meta span {
+    padding: 7px 14px;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    font-size: 14px;
+    color: var(--muted);
+    background: rgba(18, 29, 50, .7);
+  }
+
+  .cards { display: grid; gap: 14px; }
+  .cards.two { grid-template-columns: 1fr 1fr; }
+  .cards.three { grid-template-columns: repeat(3, 1fr); }
+  .cards.four { grid-template-columns: repeat(2, 1fr); }
+
+  .card {
+    padding: 16px 18px;
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    background: linear-gradient(160deg, rgba(24, 38, 63, .95), rgba(15, 25, 44, .95));
+  }
+
+  .card p { font-size: 15px; line-height: 1.45; color: var(--muted); }
+  .card h3 { color: var(--text); }
+
+  .steps { margin: 0; padding: 0; list-style: none; display: grid; gap: 12px; }
+
+  .steps li {
+    display: grid;
+    grid-template-columns: 40px 1fr;
+    gap: 14px;
+    align-items: start;
+    padding: 12px 16px;
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    background: rgba(18, 29, 50, .65);
+    font-size: 17px;
+    line-height: 1.4;
+  }
+
+  .steps b { color: var(--accent); }
+
+  .steps .num {
+    width: 34px;
+    height: 34px;
+    border-radius: 10px;
+    display: grid;
+    place-items: center;
+    font-weight: 700;
+    color: #06121f;
+    background: linear-gradient(135deg, var(--accent), var(--accent-2));
+  }
+
+  .callout {
+    align-self: flex-start;
+    padding: 10px 16px;
+    border-radius: 12px;
+    border: 1px solid rgba(125, 211, 252, .35);
+    background: rgba(125, 211, 252, .08);
+    color: var(--accent);
+    font-size: 15px;
+  }
+
+  .bullets { margin: 0; padding: 0; list-style: none; display: grid; gap: 10px; }
+  .bullets li {
+    position: relative;
+    padding-left: 26px;
+    font-size: 18px;
+    line-height: 1.4;
+    color: var(--muted);
+  }
+  .bullets li::before {
+    content: "";
+    position: absolute;
+    left: 6px;
+    top: 9px;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--accent), var(--accent-2));
+  }
+  .bullets strong { color: var(--text); font-weight: 600; }
+
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+
+  .panel {
+    padding: 18px 20px;
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    background: rgba(18, 29, 50, .7);
+  }
+
+  .panel.good { border-color: rgba(134, 239, 172, .35); }
+  .panel.bad { border-color: rgba(252, 165, 165, .3); }
+  .panel.good h3 { color: var(--ok); }
+  .panel.bad h3 { color: var(--no); }
+
+  .panel ul { margin: 8px 0 0; padding-left: 20px; display: grid; gap: 6px; }
+  .panel li { font-size: 15px; line-height: 1.4; color: var(--muted); }
+
+  table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    font-size: 15px;
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    overflow: hidden;
+  }
+
+  th, td { padding: 10px 14px; text-align: left; border-bottom: 1px solid var(--line); }
+  th { background: rgba(125, 211, 252, .07); font-weight: 600; font-size: 14px; color: var(--muted); }
+  tr:last-child td { border-bottom: 0; }
+  td.yes { color: var(--ok); }
+  td.no { color: var(--no); }
+  td.meh { color: #fcd34d; }
+  td:first-child { color: var(--text); }
+  .table-note { font-size: 13px; color: var(--muted); }
+
+  .shots { display: flex; gap: 22px; justify-content: center; align-items: flex-start; }
+  .shots figure { margin: 0; display: grid; justify-items: center; gap: 10px; }
+  .shots img {
+    height: 486px;
+    border-radius: 20px;
+    border: 1px solid var(--line);
+    box-shadow: 0 24px 60px rgba(0, 0, 0, .45);
+    background: #0b1120;
+  }
+  .shots figcaption { font-size: 13px; color: var(--muted); }
+
+  .links { display: grid; gap: 14px; margin-top: 8px; }
+
+  .links a, .links span {
+    font-size: 22px;
+    color: var(--accent);
+    text-decoration: none;
+  }
+
+  .links a { border-bottom: 1px solid rgba(125, 211, 252, .4); padding-bottom: 2px; }
+
+  .end h1 { font-size: 64px; }
+
+  footer {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 14px;
+    display: flex;
+    justify-content: space-between;
+    padding: 0 26px;
+    font-size: 12px;
+    color: var(--muted);
+    pointer-events: none;
+  }
+
+  .progress {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: rgba(36, 51, 78, .5);
+  }
+
+  .progress > i {
+    display: block;
+    height: 100%;
+    width: 0;
+    background: linear-gradient(90deg, var(--accent), var(--accent-2));
+    transition: width .3s ease;
+  }
+
+  .hint {
+    position: fixed;
+    bottom: 14px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 12px;
+    color: var(--muted);
+    opacity: .7;
+  }
+
+  @media print {
+    @page { size: 1280px 720px; margin: 0; }
+
+    html, body {
+      display: block;
+      height: auto;
+      overflow: visible;
+      background: var(--bg);
+    }
+
+    #stage { width: 1280px; height: auto; transform: none !important; }
+
+    .slide {
+      position: relative;
+      width: 1280px;
+      height: 720px;
+      opacity: 1;
+      transform: none;
+      pointer-events: auto;
+      break-after: page;
+      page-break-after: always;
+    }
+
+    .slide:last-child { break-after: auto; page-break-after: auto; }
+
+    .progress, footer, .hint { display: none !important; }
+  }
+</style>
+</head>
+<body>
+
+<div class="progress"><i id="bar"></i></div>
+
+<div id="stage">
+
+  <!-- 1 -->
+  <section class="slide">
+    <div class="kicker">Android · Kotlin · Jetpack Compose</div>
+    <h1>IP Scanner</h1>
+    <p class="lead">Сканер локальной сети, который показывает не просто IP-адреса,
+      а устройства: имя, тип, службы и открытые TCP-порты.</p>
+    <div class="meta">
+      <span>1,4 МБ</span>
+      <span>Android 7.0+</span>
+      <span>без root</span>
+      <span>open source</span>
+    </div>
+  </section>
+
+  <!-- 2 -->
+  <section class="slide">
+    <h2>Проблема</h2>
+    <div class="cards two">
+      <div class="card">
+        <h3>Телефон не видит, кто рядом</h3>
+        <p>Известен только собственный IP. Какие ещё устройства в сети, как они называются и что у них открыто — неизвестно.</p>
+      </div>
+      <div class="card">
+        <h3>Роутер показывает не всё</h3>
+        <p>В веб-интерфейсе — только DHCP-клиенты. Ни открытых портов, ни служб, ни типа устройства.</p>
+      </div>
+      <div class="card">
+        <h3>Готовые сканеры — с рекламой</h3>
+        <p>Fing и Network Analyzer бесплатны частично, требуют аккаунт и отправляют данные в облако.</p>
+      </div>
+      <div class="card">
+        <h3>MAC-адрес уже не получить</h3>
+        <p>С Android 10 система запрещает приложениям читать ARP-таблицу — MAC чужих устройств недоступен без root.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3 -->
+  <section class="slide">
+    <h2>Что такое IP Scanner</h2>
+    <p class="lead">Нативное Android-приложение, которое за несколько секунд строит
+      понятную карту сети: кто в ней есть и чем эти устройства занимаются.</p>
+    <div class="two-col">
+      <ul class="bullets">
+        <li><strong>Офлайн.</strong> Никакого сервера, аккаунта и телеметрии.</li>
+        <li><strong>Без root.</strong> Работает на обычном телефоне.</li>
+        <li><strong>Лёгкое.</strong> 1,4 МБ в релизной сборке.</li>
+        <li><strong>Открытый код.</strong> Kotlin + Compose, MIT-совместимая структура.</li>
+      </ul>
+      <ul class="bullets">
+        <li><strong>Автоопределение сети.</strong> Подсеть, маска и шлюз — сами.</li>
+        <li><strong>4 способа поиска.</strong> TCP, ICMP, UPnP/SSDP и mDNS.</li>
+        <li><strong>Порты и службы.</strong> 47 популярных TCP-портов.</li>
+        <li><strong>Готово к Android 17.</strong> Новое разрешение на локальную сеть.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- 4 -->
+  <section class="slide">
+    <h2>Как это работает</h2>
+    <ol class="steps">
+      <li><span class="num">1</span><span><b>Своя сеть.</b> <code>LinkProperties</code> даёт IPv4-адрес, длину маски и шлюз — без устаревшего Wi-Fi API.</span></li>
+      <li><span class="num">2</span><span><b>Параллельный поиск.</b> SSDP M-SEARCH, mDNS через <code>NsdManager</code> и опрос всех адресов подсети: TCP (успех или отказ RST = хост жив), при неудаче — ICMP.</span></li>
+      <li><span class="num">3</span><span><b>Уточнение.</b> Для найденных хостов — порты, обратный DNS и заголовок веб-интерфейса.</span></li>
+      <li><span class="num">4</span><span><b>Тип устройства.</b> Службы, порты, имя и страница складываются в понятный вердикт: роутер, ТВ, принтер, NAS…</span></li>
+    </ol>
+    <div class="callout">Подсеть /24 — около 6 секунд, результаты появляются по мере находки</div>
+  </section>
+
+  <!-- 5 -->
+  <section class="slide">
+    <h2>Возможности</h2>
+    <div class="cards three">
+      <div class="card"><h3>Сеть</h3><p>Wi-Fi, Ethernet и точка доступа. CIDR можно ввести вручную.</p></div>
+      <div class="card"><h3>Обнаружение</h3><p>TCP-пробы, ICMP, UPnP/SSDP и mDNS — четыре независимых источника.</p></div>
+      <div class="card"><h3>Имена</h3><p>UPnP friendlyName, mDNS, обратный DNS или заголовок веб-интерфейса.</p></div>
+      <div class="card"><h3>Типы</h3><p>Роутер, компьютер, телефон, принтер, камера, ТВ, NAS, умное устройство.</p></div>
+      <div class="card"><h3>Порты</h3><p>47 популярных портов с человекочитаемыми названиями служб.</p></div>
+      <div class="card"><h3>UX</h3><p>Прогресс, отмена, сохранение состояния при повороте экрана.</p></div>
+    </div>
+  </section>
+
+  <!-- 6 -->
+  <section class="slide">
+    <h2>Как выглядит</h2>
+    <div class="shots">
+      <figure><img src="screenshots/start.png" alt="Стартовый экран"><figcaption>Готов к сканированию</figcaption></figure>
+      <figure><img src="screenshots/scan.png" alt="Сканирование"><figcaption>Поиск и прогресс</figcaption></figure>
+      <figure><img src="screenshots/results.png" alt="Результаты"><figcaption>Имя, тип, службы и порты</figcaption></figure>
+    </div>
+  </section>
+
+  <!-- 7 -->
+  <section class="slide">
+    <h2>Альтернативы</h2>
+    <div class="cards two">
+      <div class="card">
+        <h3>Fing</h3>
+        <p>Самый известный сканер. Много функций и MAC-адреса, но приложение закрытое, с рекламой и подпиской Fing Pro.</p>
+      </div>
+      <div class="card">
+        <h3>Network Analyzer</h3>
+        <p>Удобная диагностика Wi-Fi. Реклама, часть возможностей только в платной версии, исходники закрыты.</p>
+      </div>
+      <div class="card">
+        <h3>nmap и Angry IP Scanner</h3>
+        <p>Мощные инструменты для ПК. nmap требует терминала, часть режимов — root; Angry IP Scanner вообще не для Android.</p>
+      </div>
+      <div class="card">
+        <h3>Веб-интерфейс роутера</h3>
+        <p>Бесплатно и всегда под рукой, но показывает только DHCP-клиентов: без портов, служб и типа устройства.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 8 -->
+  <section class="slide">
+    <h2>Сравнение</h2>
+    <table>
+      <thead>
+      <tr>
+        <th></th>
+        <th>IP Scanner</th>
+        <th>Fing</th>
+        <th>Network Analyzer</th>
+        <th>nmap</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr><td>Открытый исходный код</td><td class="yes">да</td><td class="no">нет</td><td class="no">нет</td><td class="yes">да</td></tr>
+      <tr><td>Без рекламы и аккаунта</td><td class="yes">да</td><td class="no">нет</td><td class="no">нет</td><td class="yes">да</td></tr>
+      <tr><td>Приложение для Android</td><td class="yes">да</td><td class="yes">да</td><td class="yes">да</td><td class="no">нет</td></tr>
+      <tr><td>Порты и службы</td><td class="yes">да</td><td class="meh">Pro</td><td class="meh">Pro</td><td class="yes">да</td></tr>
+      <tr><td>MAC-адреса</td><td class="no">нет (ОС)</td><td class="yes">да</td><td class="meh">частично</td><td class="meh">root</td></tr>
+      <tr><td>Размер</td><td class="yes">1,4 МБ</td><td class="no">десятки МБ</td><td class="no">десятки МБ</td><td class="no">десятки МБ</td></tr>
+      </tbody>
+    </table>
+    <p class="table-note">Возможности конкурентов — по публичным описаниям приложений; часть из них доступна только в платных версиях.</p>
+  </section>
+
+  <!-- 9 -->
+  <section class="slide">
+    <h2>Кто в чём сильнее</h2>
+    <div class="two-col">
+      <div class="panel good">
+        <h3>Наши сильные стороны</h3>
+        <ul>
+          <li>Открытый код — можно проверить, что приложение не отправляет данные</li>
+          <li>Ноль рекламы, трекеров и регистрации</li>
+          <li>Полностью офлайн, бесплатно, без подписок</li>
+          <li>1,4 МБ и поддержка Android 17</li>
+          <li>Честно объясняет ограничения вместо пустых полей</li>
+        </ul>
+      </div>
+      <div class="panel bad">
+        <h3>Где мы уступаем</h3>
+        <ul>
+          <li>Нет MAC-адресов и базы производителей (системный запрет Android)</li>
+          <li>Нет истории, уведомлений и экспорта отчётов</li>
+          <li>Меньше протоколов: нет SNMP, Wake-on-LAN, traceroute</li>
+          <li>Только IPv4 и до 1024 адресов за запуск</li>
+          <li>Интерфейс пока только на русском</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- 10 -->
+  <section class="slide">
+    <h2>Ограничения</h2>
+    <ul class="bullets">
+      <li><strong>MAC.</strong> Android 10+ запрещает читать ARP-таблицу — без root MAC чужих устройств недоступен.</li>
+      <li><strong>Брандмауэр.</strong> Устройство, которое молча отбрасывает TCP и ICMP, не появится в списке.</li>
+      <li><strong>Нет открытых портов и анонсов</strong> — имя и тип определить нечем, карточка так и пишет.</li>
+      <li><strong>IPv4.</strong> Сканирование ограничено 1024 адресами за один запуск.</li>
+    </ul>
+    <p class="table-note">Это ограничения платформы и выбранного метода, а не ошибки приложения — они зафиксированы в README и в самом интерфейсе.</p>
+  </section>
+
+  <!-- 11 -->
+  <section class="slide end">
+    <div class="kicker">Ссылки</div>
+    <h1>Спасибо за внимание</h1>
+    <div class="links">
+      <span>GitHub: <a href="https://github.com/xinalikai/ipscan">github.com/xinalikai/ipscan</a></span>
+      <span>APK: <a href="https://github.com/xinalikai/ipscan/raw/main/IPScanner-1.0.0.apk">IPScanner-1.0.0.apk</a> в корне репозитория</span>
+    </div>
+    <p class="lead">Исходный код, тесты и подписанная релизная сборка — в репозитории.</p>
+  </section>
+
+</div>
+
+<footer>
+  <span>IP Scanner · xinalikai</span>
+  <span id="counter">1 / 11</span>
+</footer>
+<div class="hint">← → — слайды · F — на весь экран</div>
+
+<script>
+  const slides = Array.from(document.querySelectorAll('.slide'));
+  const bar = document.getElementById('bar');
+  const counter = document.getElementById('counter');
+  const stage = document.getElementById('stage');
+  let index = 0;
+
+  function show(next) {
+    index = Math.max(0, Math.min(slides.length - 1, next));
+    slides.forEach((slide, i) => slide.classList.toggle('active', i === index));
+    bar.style.width = ((index + 1) / slides.length * 100) + '%';
+    counter.textContent = (index + 1) + ' / ' + slides.length;
+    if (history.replaceState) history.replaceState(null, '', '#slide-' + (index + 1));
+  }
+
+  function fit() {
+    const scale = Math.min(window.innerWidth / 1280, (window.innerHeight - 10) / 720);
+    stage.style.transform = 'scale(' + scale + ')';
+  }
+
+  document.addEventListener('keydown', (event) => {
+    if (['ArrowRight', 'ArrowDown', 'PageDown', ' '].includes(event.key)) {
+      event.preventDefault();
+      show(index + 1);
+    } else if (['ArrowLeft', 'ArrowUp', 'PageUp'].includes(event.key)) {
+      event.preventDefault();
+      show(index - 1);
+    } else if (event.key === 'Home') {
+      show(0);
+    } else if (event.key === 'End') {
+      show(slides.length - 1);
+    } else if (event.key === 'f' || event.key === 'F') {
+      if (document.fullscreenElement) document.exitFullscreen();
+      else document.documentElement.requestFullscreen?.();
+    }
+  });
+
+  document.addEventListener('click', (event) => {
+    if (event.target.closest('a')) return;
+    show(index + (event.clientX > window.innerWidth / 2 ? 1 : -1));
+  });
+
+  let touchX = null;
+  document.addEventListener('touchstart', (event) => { touchX = event.touches[0].clientX; }, { passive: true });
+  document.addEventListener('touchend', (event) => {
+    if (touchX === null) return;
+    const delta = event.changedTouches[0].clientX - touchX;
+    if (Math.abs(delta) > 50) show(index + (delta < 0 ? 1 : -1));
+    touchX = null;
+  });
+
+  window.addEventListener('resize', fit);
+
+  const initial = /#slide-(\d+)/.exec(location.hash);
+  fit();
+  show(initial ? Number(initial[1]) - 1 : 0);
+</script>
+
+</body>
+</html>
